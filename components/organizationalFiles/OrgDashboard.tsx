@@ -1,3 +1,4 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { IoMegaphoneOutline } from "react-icons/io5";
 import { MdOutlineFeedback } from "react-icons/md";
 import { FaUsers } from "react-icons/fa6";
 import { Building } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   Plus,
   Megaphone,
@@ -13,6 +15,7 @@ import {
 } from "lucide-react";
 
 export default function OrgDashboard() {
+  const route = useRouter()
   const stats = [
     {
       data: 127,
@@ -61,7 +64,7 @@ export default function OrgDashboard() {
 
       {/* Actions */}
       <div className="flex space-x-4 text-white">
-        <Button className="flex items-center space-x-2 bg-[#3A6A8D] hover:bg-[#5C87A3]">
+        <Button className="flex items-center space-x-2 bg-[#3A6A8D] hover:bg-[#5C87A3]" onClick={ () =>  route.push("/organization/addNewProcedures")}>
           <Plus className="w-4 h-4" />
           <span>Add New Procedure</span>
         </Button>

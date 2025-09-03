@@ -1,32 +1,51 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { UserSidebar } from "./UserSidebar"
+"use client";
+import { useRouter } from "next/navigation";
+import { UserSidebar } from "./UserSidebar";
+import { usePathname } from "next/navigation";
 
 const adminMenuItems = [
-  { iconSrc: "/icons/dashboard.svg", iconAlt: "Dashboard", label: "dashboard", active: true },
-  { iconSrc: "/icons/official-notices.svg", iconAlt: "Notices", label: "notices", active: false },
-  { iconSrc: "/icons/discussions.svg", iconAlt: "View Feedbacks", label: "feedback", active: false },
-  { iconSrc: "/icons/manage-procedure.svg", iconAlt: "Manage Procedures", label: "procedures", active: false },
-]
+  {
+    iconSrc: "/icons/dashboard.svg",
+    iconAlt: "Dashboard",
+    label: "dashboard",
+  },
+  {
+    iconSrc: "/icons/official-notices.svg",
+    iconAlt: "Notices",
+    label: "notices",
+  },
+  {
+    iconSrc: "/icons/discussions.svg",
+    iconAlt: "View Feedbacks",
+    label: "feedback",
+  },
+  {
+    iconSrc: "/icons/manage-procedure.svg",
+    iconAlt: "Manage Procedures",
+    label: "procedures",
+  },
+];
 
 export default function OrganizationSidebar() {
   const router = useRouter();
+  const pathname = usePathname(); // 👈 gets current URL path
+
   const handleSettingsClick = () => {
-    // org settings logic
-  }
+    // Admin settings logic
+  };
 
   const handleLogoutClick = () => {
-    // org logout logic
-  }
+    // Admin logout logic
+  };
 
-  const handleMenuItemClick = (label: string) => {
-    router.push(`/organization/${label}`)
-  }
-
-  const menuItemsWithHandlers = adminMenuItems.map((item) => ({
-    ...item,
-    onClick: () => handleMenuItemClick(item.label),
-  }))
+  const menuItemsWithHandlers = adminMenuItems.map((item) => {
+    const isActive = pathname.startsWith(`/organization/${item.label}`);
+    return {
+      ...item,
+      active: isActive, // 👈 mark active based on URL
+      onClick: () => router.push(`/organization/${item.label}`),
+    };
+  });
 
   return (
     <UserSidebar
@@ -36,5 +55,5 @@ export default function OrganizationSidebar() {
       settingsLabel="Settings"
       logoutLabel="Sign Out"
     />
-  )
+  );
 }
