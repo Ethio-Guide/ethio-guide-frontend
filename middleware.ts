@@ -10,6 +10,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Allow public access to the organizations list page
+  if (pathname.startsWith("/organization/(orgRelatedPages)/orgs")) {
+    console.log("Allowing public access to organizations list page:", { pathname });
+    return NextResponse.next();
+  }
+
   type TokenWithRole = {
     user?: {
       role?: string;
@@ -32,18 +38,21 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes: { [key: string]: string[] } = {
     admin: ["/admin", "/admin/*"],
     user: ["/user", "/user/*"],
-    org: ["/organization", "/organization/*"],
+    //org: ["/organization", "/organization/*"],
   };
 
-  const isProtectedRoute = Object.entries(protectedRoutes).some(([, paths]) =>
-    paths.some((path) => {
-      if (path.endsWith("/*")) {
-        const basePath = path.slice(0, -2);
-        return pathname.startsWith(basePath);
-      }
-      return pathname === path;
-    })
-  );
+ const isProtectedRoute = Object.entries(protectedRoutes).some(([, paths]) =>
+  paths.some((path) => {
+    if (pathname.startsWith("/organization/(orgRelatedPages)/orgs")) {
+      return false; // explicitly public
+    }
+    if (path.endsWith("/*")) {
+      const basePath = path.slice(0, -2);
+      return pathname.startsWith(basePath);
+    }
+    return pathname === path;
+  })
+);
 
   // --- Start Modified Logic ---
 
