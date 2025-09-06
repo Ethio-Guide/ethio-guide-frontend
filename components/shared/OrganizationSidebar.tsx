@@ -4,30 +4,38 @@ import { UserSidebar } from "./UserSidebar"
 import { signOut } from "next-auth/react";
 
 const adminMenuItems = [
-  { iconSrc: "/icons/dashboard.svg", iconAlt: "Dashboard", label: "dashboard", active: true },
-  { iconSrc: "/icons/official-notices.svg", iconAlt: "Notices", label: "notices", active: false },
-  { iconSrc: "/icons/discussions.svg", iconAlt: "View Feedbacks", label: "feedback", active: false },
-  { iconSrc: "/icons/manage-procedure.svg", iconAlt: "Manage Procedures", label: "procedures", active: false },
-]
+  { iconSrc: "/icons/dashboard.svg", iconAlt: "Dashboard", label: "dashboard" },
+  { iconSrc: "/icons/official-notices.svg", iconAlt: "Notices", label: "notices" },
+  { iconSrc: "/icons/discussions.svg", iconAlt: "View Feedbacks", label: "feedback" },
+  { iconSrc: "/icons/manage-procedure.svg", iconAlt: "Manage Procedures", label: "procedures" },
+];
+
+import { usePathname } from "next/navigation";
 
 export default function OrganizationSidebar() {
   const router = useRouter();
+  const pathname = usePathname();
+
   const handleSettingsClick = () => {
     // org settings logic
-  }
+  };
 
   const handleLogoutClick = async () => {
-      await signOut({ callbackUrl: "/" }); // Call signOut and redirect to login page
-    };
+    await signOut({ callbackUrl: "/" });
+  };
 
   const handleMenuItemClick = (label: string) => {
-    router.push(`/organization/${label}`)
-  }
+    router.push(`/organization/${label}`);
+  };
 
-  const menuItemsWithHandlers = adminMenuItems.map((item) => ({
-    ...item,
-    onClick: () => handleMenuItemClick(item.label),
-  }))
+  const menuItemsWithHandlers = adminMenuItems.map((item) => {
+    const isActive = pathname === `/organization/${item.label}`;
+    return {
+      ...item,
+      active: isActive,
+      onClick: () => handleMenuItemClick(item.label),
+    };
+  });
 
   return (
     <UserSidebar
@@ -37,5 +45,5 @@ export default function OrganizationSidebar() {
       settingsLabel="Settings"
       logoutLabel="Sign Out"
     />
-  )
+  );
 }

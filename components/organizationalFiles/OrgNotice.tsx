@@ -1,3 +1,4 @@
+"use client"
 import { Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BiSolidEdit } from "react-icons/bi";
@@ -12,46 +13,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import Link from "next/link";
+import { useState } from "react";
+import { useGetOrgNoticesQuery } from "@/app/services/orgsApi";
 
-export default function OrgNoticeMangement() {
-  const notices = [
-    {
-      title: "New Business Registration Requirements",
-      detail:
-        "Updated documentation requirements for new business applications",
-      status: "Published",
-      publishDate: "Jan 15, 2024",
-      expiryDate: "Mar 15, 2024",
-      lastUpdatedAt: "Jan 20, 2024",
-    },
-    {
-      title: "Office Closure - Holiday Schedule",
-      detail:
-        "Business registration office will be closed during national holidays",
-      status: "Published",
-      publishDate: "Dec 15, 2023",
-      expiryDate: "Dec 15, 2023",
-      lastUpdatedAt: "Jan 18, 2024",
-    },
-    {
-      title: "Digital Transformation Initiative",
-      detail: "Introduction of new online services for business registration",
-      status: "Published",
-      publishDate: "Dec 01, 2023",
-      expiryDate: "Jan 01, 2024",
-      lastUpdatedAt: "Dec 15, 2023",
-    },
-    {
-      title: "Fee Structure Updates",
-      detail: "Revised fee schedule for various business registration services",
-      status: "Published",
-      publishDate: "Jan 10, 2024",
-      expiryDate: "Jun 10, 2024",
-      lastUpdatedAt: "Jan 12, 2024",
-    },
-  ];
+type Notice = {
+  id: string;
+  title: string;
+  detail?: string;
+  content?: string;
+  publishedAt?: string;
+  expiryDate?: string;
+  updatedAt?: string;
+};
+
+export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
+  const { data, isLoading, error } = useGetOrgNoticesQuery(orgId);
+  const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
 
   return (
     <div className="p-6 space-y-6 w-full">
@@ -78,72 +56,85 @@ export default function OrgNoticeMangement() {
       <Card className="shadow-sm overflow-x-auto">
         <CardContent>
           <div className="min-w-[700px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="text-neutral">
-                  <TableHead>Notice Title</TableHead>
-                  <TableHead>Publish Date</TableHead>
-                  <TableHead>Expiry Date</TableHead>
-                  <TableHead>Last Updated</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {notices.map(
-                  ({
-                    title,
-                    detail,
-                    publishDate,
-                    expiryDate,
-                    lastUpdatedAt,
-                  }) => (
-                    <TableRow key={title} className="hover:bg-accent">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : error ? (
+              <div className="text-red-500">Failed to load notices.</div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="text-neutral">
+                    <TableHead>Notice Title</TableHead>
+                    <TableHead>Publish Date</TableHead>
+                    <TableHead>Expiry Date</TableHead>
+                    <TableHead>Last Updated</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data?.notices?.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center p-4">No notices found.</TableCell>
+                    </TableRow>
+                  )}
+                  {data?.notices?.map((notice: Notice) => (
+                    <TableRow key={notice.id} className="hover:bg-accent">
                       <TableCell>
-                        <p className="font-medium">{title}</p>
+                        <p className="font-medium">{notice.title}</p>
                         <p className="text-sm text-muted-foreground text-neutral">
-                          {detail}
+                          {notice.detail || notice.content}
                         </p>
                       </TableCell>
                       <TableCell className="text-neutral">
-                        {publishDate}
+                        {notice.publishedAt ? new Date(notice.publishedAt).toLocaleDateString() : "-"}
                       </TableCell>
                       <TableCell className="text-neutral">
-                        {expiryDate}
+                        {notice.expiryDate ? new Date(notice.expiryDate).toLocaleDateString() : "-"}
                       </TableCell>
                       <TableCell className="text-neutral">
-                        {lastUpdatedAt}
+                        {notice.updatedAt ? new Date(notice.updatedAt).toLocaleDateString() : "-"}
                       </TableCell>
                       <TableCell className="flex space-x-2 mt-3">
-                        <FaEye className="w-4 h-4 text-primary cursor-pointer" />
+                        <FaEye className="w-4 h-4 text-primary cursor-pointer" onClick={() => setSelectedNotice(notice)} />
                         <BiSolidEdit className="w-4 h-4 text-primary cursor-pointer" />
                         <Trash2 className="w-4 h-4 text-red-600 cursor-pointer" />
                       </TableCell>
                     </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
-          {/* Pagination */}
+          {/* Pagination (static for now) */}
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground text-neutral">
-              Showing 1 to 4 of 12 results
+              Showing 1 to {data?.notices?.length || 0} of {data?.total || data?.notices?.length || 0} results
             </p>
             <div className="flex space-x-2">
-              <Button variant="outline" size="sm">
-                Previous
-              </Button>
-              <Button size="sm" className="bg-primary text-white">
-                1
-              </Button>
-              <Button variant="outline" size="sm">
-                Next
-              </Button>
+              <Button variant="outline" size="sm">Previous</Button>
+              <Button size="sm" className="bg-primary text-white">1</Button>
+              <Button variant="outline" size="sm">Next</Button>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* View Notice Modal */}
+      {selectedNotice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">Notice Details</h2>
+            <div className="mb-2"><b>Title:</b> {selectedNotice.title}</div>
+            <div className="mb-2"><b>Content:</b> {selectedNotice.content || selectedNotice.detail}</div>
+            <div className="mb-2"><b>Published:</b> {selectedNotice.publishedAt ? new Date(selectedNotice.publishedAt).toLocaleString() : "-"}</div>
+            <div className="mb-2"><b>Updated:</b> {selectedNotice.updatedAt ? new Date(selectedNotice.updatedAt).toLocaleString() : "-"}</div>
+            <div className="mb-2"><b>Expires:</b> {selectedNotice.expiryDate ? new Date(selectedNotice.expiryDate).toLocaleString() : "-"}</div>
+            <div className="flex justify-end mt-4">
+              <Button variant="outline" onClick={() => setSelectedNotice(null)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create New Notice */}
       <div className="flex justify-end">
