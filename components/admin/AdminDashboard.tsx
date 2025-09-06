@@ -8,6 +8,47 @@ import { IoMegaphoneOutline } from "react-icons/io5";
 import { Plus, Megaphone, FileText, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+
+const stats = [
+  {
+    data: 127,
+    description: "Procedures Managed",
+    icon: (
+      <div className="bg-gray-100 p-3 rounded-2xl ">
+        <FileText className="w-6 h-6  text-[#3A6A8D] mb-2" />
+      </div>
+    ),
+  },
+  {
+    data: 8,
+    description: "Active Notices",
+    icon: (
+      <div className="bg-gray-100 p-3 rounded-2xl ">
+        <IoMegaphoneOutline className="w-6 h-6 text-[#5E9C8D] mb-2" />
+      </div>
+    ),
+  },
+  // {
+  //   data: 23,
+  //   description: "Pending Feedback",
+  //   icon: (
+  //     <div className="bg-gray-100 p-3 rounded-2xl ">
+  //       <MdOutlineFeedback className="w-6 h-6 text-[#1C3B2E] mb-2" />
+  //     </div>
+  //   ),
+  // },
+  {
+    data: 44,
+    description: "User Interactions",
+    icon: (
+      <div className="bg-gray-100 p-3 rounded-2xl ">
+        <FaUsers className="w-6 h-6 text-[#1C3B2E] mb-2" />
+      </div>
+    ),
+  },
+];
+
+
 export default function AdminDashboard({
   totalProcedures,
   totalNotices,
@@ -15,6 +56,7 @@ export default function AdminDashboard({
   totalProcedures: number;
   totalNotices: number;
 }) {
+
   const route = useRouter();
   const stats = [
     {
