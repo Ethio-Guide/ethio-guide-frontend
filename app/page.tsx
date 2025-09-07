@@ -26,15 +26,29 @@ import {
 } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
+import LandingPageLoading from "@/components/ui/landing-page-loading"
 
 export default function HomePage() {
+  const [isLoading, setIsLoading] = useState(true)
   const [isVisible, setIsVisible] = useState(false)
   const [scrollY, setScrollY] = useState(0)
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const observerRef = useRef<IntersectionObserver | null>(null)
 
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+    // Ensure content is visible after loading
+    setTimeout(() => {
+      setIsVisible(true)
+      setVisibleSections(new Set(['hero', 'features', 'how-it-works', 'testimonials', 'cta']))
+    }, 100)
+  }
+
   useEffect(() => {
+    // Only set up observers after loading is complete
+    if (isLoading) return
+
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener("scroll", handleScroll, { passive: true })
 
@@ -54,13 +68,16 @@ export default function HomePage() {
     const sections = document.querySelectorAll("[data-animate]")
     sections.forEach((section) => observerRef.current?.observe(section))
 
-    setIsVisible(true)
-
     return () => {
       window.removeEventListener("scroll", handleScroll)
       observerRef.current?.disconnect()
     }
-  }, [])
+  }, [isLoading])
+
+  // Show loading screen first
+  if (isLoading) {
+    return <LandingPageLoading onComplete={handleLoadingComplete} />
+  }
 
   return (
     <div className="min-h-screen bg-[#f9fafb] overflow-x-hidden">
@@ -74,11 +91,11 @@ export default function HomePage() {
           <div className="flex items-center gap-2 group cursor-pointer">
             <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#3a6a8d] to-[#2e4d57] rounded-lg flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-lg group-hover:shadow-xl">
               <Image
-                src="/images/ethioguide-symbol.png"
+                src="/images/ethioguide-logo.jpg"
                 alt="EthioGuide Logo"
                 width={24}
                 height={24}
-                className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110"
+                className="w-5 h-5 sm:w-6 sm:h-6 rounded transition-transform duration-300 group-hover:scale-110"
                 style={{ objectFit: "contain" }}
                 priority
               />
@@ -259,7 +276,7 @@ export default function HomePage() {
               style={{ transitionDelay: "800ms" }}
             >
               {[
-                { color: "#5e9c8d", text: "Free to use" },
+                { color: "#5e9c8d", text: "Easy to use" },
                 { color: "#3a6a8d", text: "Secure & Private" },
                 { color: "#a7b3b9", text: "24/7 Available" },
               ].map((item, index) => (
@@ -736,7 +753,7 @@ export default function HomePage() {
               <div className="flex items-center gap-2 mb-4 group cursor-pointer">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#3a6a8d] to-[#2e4d57] rounded-lg flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12">
                   <Image
-                src="/images/ethioguide-symbol.png"
+                src="/images/ethioguide-logo.jpg"
                 alt="EthioGuide Logo"
                 width={24}
                 height={24}

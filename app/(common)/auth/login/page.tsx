@@ -53,18 +53,21 @@ export default function LoginPage() {
 
   return (
     <div className="bg-neutral-light text-foreground flex flex-col items-center p-5 font-sans min-h-full">
-      <div className="flex items-center gap-3">
-        <Image
-          src="/images/ethioguide-symbol.png"
-          alt="EthioGuide Symbol"
-          width={50}
-          height={50}
-          priority
-        />
-        <span className="text-gray-800 font-semibold text-3xl">EthioGuide</span>
-      </div>
       <Card className="w-full max-w-md bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden">
         <CardHeader className="pb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm border border-[#a7b3b9]/40 rounded-full shadow-sm">
+              <Image
+                src="/logo/ethioguide-logo.png"
+                alt="EthioGuide Symbol"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+                priority
+              />
+              <span className="text-[#2e4d57] font-semibold">EthioGuide</span>
+            </div>
+          </div>
           <div className="flex flex-col items-center space-y-3">
             <div className="flex justify-center items-center w-full">
               <CardTitle className="text-2xl sm:text-3xl font-bold text-center font-amharic bg-gradient-to-r from-[#2e4d57] to-[#1c3b2e] bg-clip-text text-transparent">
