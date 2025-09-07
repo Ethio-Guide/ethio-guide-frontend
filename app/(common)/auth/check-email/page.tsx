@@ -8,18 +8,21 @@ import { MailCheck } from "lucide-react";
 export default function CheckEmailPage() {
   return (
     <div className="bg-neutral-light text-foreground min-h-[73dvh] flex flex-col flex-1 items-center p-4 sm:pt-6 space-y-2">
-      <div className="flex items-center gap-3 p-5">
-        <Image
-          src="/images/ethioguide-symbol.png"
-          alt="EthioGuide Symbol"
-          width={50}
-          height={50}
-          priority
-        />
-        <span className="text-gray-800 font-semibold text-3xl">EthioGuide</span>
-      </div>
       <Card className="bg-background-light w-full max-w-md border-neutral rounded-xl">
         <CardHeader>
+          <div className="flex items-center justify-center mb-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80">
+              <Image
+                src="/logo/ethioguide-logo.png"
+                alt="EthioGuide Symbol"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+                priority
+              />
+              <span className="text-[#2e4d57] font-semibold">EthioGuide</span>
+            </div>
+          </div>
           <div className="flex flex-col items-center space-y-4">
             <div className="text-primary rounded-full p-3 bg-primary-light">
               <MailCheck size={48} className="text-primary" /> {/* Using MailCheck icon */}

@@ -21,12 +21,12 @@ export function Header() {
   const isAdmin = pathname.startsWith(`/admin`);
   const isOrg = pathname.startsWith(`/organization`);
   return (
-    <header className="bg-white px-6 py-4 sticky top-0 z-50">
-      <div className="flex items-center justify-between">
+    <header className="bg-white/90 backdrop-blur-sm border-b border-[#a7b3b9]/30 px-6 py-4 sticky top-0 z-50">
+      <div className="flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Image
-            src="/images/ethioguide-symbol.png"
+            src="/logo/ethioguide-logo.png"
             alt="EthioGuide Symbol"
             width={40}
             height={40}
@@ -39,15 +39,15 @@ export function Header() {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-4">
+  <div className="flex items-center gap-4">
           {/* Language Toggle */}
           {mounted ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+      variant="ghost"
+      size="sm"
+      className="text-[#2e4d57] hover:text-[#2e4d57] hover:bg-[#3a6a8d]/10 rounded-xl"
                 >
                   {language}
                   <ChevronDown className="w-4 h-4 ml-1" />
@@ -69,7 +69,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="ghost" size="sm" className="text-gray-600" aria-hidden>
+            <Button variant="ghost" size="sm" className="text-[#2e4d57]" aria-hidden>
               {language}
               <ChevronDown className="w-4 h-4 ml-1" />
             </Button>
@@ -77,7 +77,7 @@ export function Header() {
 
           {/* Notifications */}
           {mounted ? <NotificationDropdown /> : (
-            <Button variant="ghost" size="sm" className="relative p-2 rounded-full" aria-hidden>
+            <Button variant="ghost" size="sm" className="relative p-2 rounded-full hover:bg-[#3a6a8d]/10" aria-hidden>
               <Image src="/icons/notifications.svg" alt="Notifications" width={20} height={20} className="w-5 h-5" />
             </Button>
           )}
@@ -86,7 +86,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="sm"
-            className="p-0 rounded-full hover:bg-gray-100"
+            className="p-0 rounded-full hover:bg-[#3a6a8d]/10"
             onClick={() => {
               if (isAdmin) {
                 window.location.href = "/admin/profile";
@@ -99,7 +99,7 @@ export function Header() {
             }}
             aria-label="Go to profile"
           >
-            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-gray-200">
+            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#a7b3b9]/30">
               <Image
                 src="/images/profile-photo.jpg"
                 alt="Profile Photo"

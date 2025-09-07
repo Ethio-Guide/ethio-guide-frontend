@@ -205,7 +205,6 @@ export default function ProceduresPage() {
                             </div>
                             <div>
                               <div className="font-medium text-sm text-[#111827]">{procedure.name}</div>
-                        {/* Footer is now part of the shared layout */}
                               <div className="text-sm text-[#4b5563]">{procedure.description}</div>
                             </div>
                           </div>

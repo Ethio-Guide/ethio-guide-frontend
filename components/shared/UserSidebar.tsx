@@ -35,7 +35,7 @@ export function UserSidebar({
   return (
     <aside
       className={cn(
-        "bg-white border-r border-gray-200 transition-all duration-300 ease-in-out relative",
+        "bg-white/90 backdrop-blur-sm border-r border-[#a7b3b9]/30 transition-all duration-300 ease-in-out relative",
         collapsed ? "w-20" : "w-64",
         className,
       )}
@@ -44,12 +44,12 @@ export function UserSidebar({
         variant="ghost"
         size="sm"
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-6 z-10 w-6 h-6 rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+        className="absolute -right-3 top-6 z-10 w-6 h-6 rounded-full border border-[#a7b3b9]/30 bg-white hover:bg-[#3a6a8d]/10 shadow-sm hover:shadow-md transition-all"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed 
-          ? <ChevronRight className="w-3 h-3 text-gray-300 hover:text-gray-100" /> 
-          : <ChevronLeft className="w-3 h-3 text-gray-300 hover:text-gray-100" />
+          ? <ChevronRight className="w-3 h-3 text-[#3a6a8d]" /> 
+          : <ChevronLeft className="w-3 h-3 text-[#3a6a8d]" />
         }
       </Button>
 
@@ -59,12 +59,13 @@ export function UserSidebar({
             <div
               key={index}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200",
+                "relative overflow-hidden group flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all duration-300 border",
                 item.active
-                  ? "text-gray-800 bg-gray-100 shadow-sm"
-                  : "text-gray-600 hover:bg-gray-200 hover:text-gray-900 font-medium",
+                  ? "bg-[#3a6a8d]/10 border-[#3a6a8d]/30 text-[#2e4d57] shadow-sm"
+                  : "bg-white/90 border-[#a7b3b9]/30 text-[#2e4d57] hover:shadow-md hover:-translate-y-0.5",
                 collapsed ? "justify-center" : "",
               )}
+              style={{ animationDelay: `${Math.min(index * 0.04, 0.4)}s` }}
               onClick={item.onClick}
               role="button"
               tabIndex={0}
@@ -74,25 +75,28 @@ export function UserSidebar({
                 }
               }}
             >
-              <CustomIcon
-                src={item.iconSrc}
-                alt={item.iconAlt}
-                className={cn("flex-shrink-0", collapsed ? "w-8 h-8" : "w-5 h-5")}
-              />
-              {!collapsed && (
-                <span className={cn("transition-opacity duration-200", item.active ? "font-medium" : "")}>
-                  {item.iconAlt}
-                </span>
-              )}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#a7b3b9]/5 to-[#5e9c8d]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+              <div className="relative z-10 flex items-center gap-3">
+                <CustomIcon
+                  src={item.iconSrc}
+                  alt={item.iconAlt}
+                  className={cn("flex-shrink-0", collapsed ? "w-8 h-8" : "w-5 h-5")}
+                />
+                {!collapsed && (
+                  <span className={cn("transition-colors duration-300", item.active ? "font-medium" : "group-hover:text-[#3a6a8d]") }>
+                    {item.iconAlt}
+                  </span>
+                )}
+              </div>
             </div>
           ))}
         </nav>
 
-        <div className="p-4 space-y-2 border-t border-gray-100">
+        <div className="p-4 space-y-2 border-t border-[#a7b3b9]/30">
 
-<div
+          <div
             className={cn(
-              "flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-red-100 hover:text-red-700 font-medium rounded-lg cursor-pointer transition-all duration-200",
+              "relative overflow-hidden group flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all duration-300 border bg-white/90 border-[#a7b3b9]/30 text-[#2e4d57] hover:shadow-md",
               collapsed ? "justify-center" : "",
             )}
             onClick={onLogoutClick}
@@ -104,12 +108,15 @@ export function UserSidebar({
               }
             }}
           >
-            <CustomIcon
-              src="/icons/logout.svg"
-              alt="Logout"
-              className={cn("flex-shrink-0", collapsed ? "w-8 h-8" : "w-5 h-5")}
-            />
-            {!collapsed && <span>{logoutLabel}</span>}
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+            <div className="relative z-10 flex items-center gap-3">
+              <CustomIcon
+                src="/icons/logout.svg"
+                alt="Logout"
+                className={cn("flex-shrink-0", collapsed ? "w-8 h-8" : "w-5 h-5")}
+              />
+              {!collapsed && <span className="group-hover:text-red-700 transition-colors">{logoutLabel}</span>}
+            </div>
           </div>
         </div>
       </div>

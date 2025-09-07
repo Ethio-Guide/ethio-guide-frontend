@@ -77,18 +77,21 @@ export default function RegisterPage() {
 
   return (
     <div className="bg-neutral-light text-foreground flex flex-col items-center p-4 font-sans min-h-full">
-      <div className="flex items-center gap-3">
-        <Image
-          src="/images/ethioguide-symbol.png"
-          alt="EthioGuide Symbol"
-          width={50}
-          height={50}
-          priority
-        />
-        <span className="text-gray-800 font-semibold text-3xl">EthioGuide</span>
-      </div>
       <Card className="bg-background-light w-full max-w-md border-neutral mt-6 mb-8">
         <CardHeader>
+          <div className="flex items-center justify-center mb-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 ">
+              <Image
+                src="/logo/ethioguide-logo.png"
+                alt="EthioGuide Symbol"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+                priority
+              />
+              <span className="text-[#2e4d57] font-semibold">EthioGuide</span>
+            </div>
+          </div>
           <div className="flex flex-col items-center space-y-4">
             <div className="flex justify-center items-center w-full">
               <CardTitle className="text-2xl sm:text-3xl font-bold text-center font-amharic bg-gradient-to-r from-[#2e4d57] to-[#1c3b2e] bg-clip-text text-transparent">

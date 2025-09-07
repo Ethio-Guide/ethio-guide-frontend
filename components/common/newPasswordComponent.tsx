@@ -82,21 +82,21 @@ export default function NewPasswordComponent() {
   return (
     // <div className="bg-neutral-light text-foreground flex flex-col flex-1 min-h-[73dvh] items-center pt-4 pb-5 sm:pt-6 sm:pb-10 space-y-0 sm:space-y-1">
     <div className="bg-neutral-light text-foreground min-h-[73dvh] flex flex-col flex-1 items-center p-4 sm:pt-6 space-y-2">
-      <div className="flex items-center gap-2">
-        <Image
-          src="/images/ethioguide-symbol.png"
-          alt="EthioGuide Symbol"
-          width={40}
-          height={40}
-          className="h-10 w-10 sm:h-12 sm:w-12"
-          priority
-        />
-        <span className="text-gray-800 font-semibold text-2xl sm:text-3xl">
-          EthioGuide
-        </span>
-      </div>
       <Card className="bg-background-light w-full max-w-md border-neutral mb-0">
         <CardHeader className="px-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm border border-[#a7b3b9]/40 rounded-full shadow-sm">
+              <Image
+                src="/logo/ethioguide-logo.jpg"
+                alt="EthioGuide Symbol"
+                width={28}
+                height={28}
+                className="h-7 w-7 rounded-full"
+                priority
+              />
+              <span className="text-[#2e4d57] font-semibold">EthioGuide</span>
+            </div>
+          </div>
           <div className="flex flex-col items-center space-y-2">
             <div className="flex justify-center items-center w-full">
               <CardTitle className="text-xl sm:text-2xl font-bold text-center">

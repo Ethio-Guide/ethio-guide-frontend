@@ -31,7 +31,7 @@ export function Header() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image
-            src="/images/ethioguide-symbol.png"
+            src="/logo/ethioguide-logo.png"
             alt="EthioGuide Symbol"
             width={32}
             height={32}
