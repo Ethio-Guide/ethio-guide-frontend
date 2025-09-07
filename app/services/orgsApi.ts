@@ -1,8 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// Helper to get token from localStorage
+const getAuthToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
 export const orgsApi = createApi({
   reducerPath: 'orgsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://ethio-guide-backend.onrender.com/api/v1/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://ethio-guide-backend.onrender.com/api/v1/',
+    prepareHeaders: (headers) => {
+      const token = getAuthToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   endpoints: (builder) => ({
     getOrgs: builder.query({
       query: (params) => {
