@@ -1,10 +1,11 @@
+
 "use client"
 import { useState } from "react";
 import { useCreateProcedureMutation, useCreateNoticeMutation } from "@/app/services/orgsApi";
 // Placeholder hooks for future endpoints
 // import { useGetOrgMetricsQuery, useGetOrgRecentActivityQuery, useGetOrgTopProceduresQuery } from "@/app/services/orgsApi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IoMegaphoneOutline } from "react-icons/io5";
 import { MdOutlineFeedback } from "react-icons/md";
@@ -61,6 +62,23 @@ export default function OrgDashboard() {
   const stats = [
     {
       data: "-", // metrics?.proceduresCount ?? "-",
+// import { MdOutlineFeedback } from "react-icons/md";
+// import { FaUsers } from "react-icons/fa6";
+import { Plus, Megaphone, FileText, MessageSquare } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Building } from "lucide-react";
+
+export default function OrgDashboard({
+  totalProcedures,
+  totalNotices,
+}: {
+  totalProcedures: number;
+  totalNotices: number;
+}) {
+  const route = useRouter();
+  const stats = [
+    {
+      data: totalProcedures,
       description: "Procedures Managed",
       icon: (
         <div className="bg-gray-100 p-3 rounded-2xl ">
@@ -70,6 +88,7 @@ export default function OrgDashboard() {
     },
     {
       data: "-", // metrics?.activeNoticesCount ?? "-",
+      data: totalNotices,
       description: "Active Notices",
       icon: (
         <div className="bg-gray-100 p-3 rounded-2xl ">
@@ -95,7 +114,26 @@ export default function OrgDashboard() {
         </div>
       ),
     },
+    // {
+    //   data: 23,
+    //   description: "Pending Feedback",
+    //   icon: (
+    //     <div className="bg-gray-100 p-3 rounded-2xl ">
+    //       <MdOutlineFeedback className="w-6 h-6 text-[#1C3B2E] mb-2" />
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   data: 1284,
+    //   description: "User Interactions",
+    //   icon: (
+    //     <div className="bg-gray-100 p-3 rounded-2xl ">
+    //       <FaUsers className="w-6 h-6 text-[#1C3B2E] mb-2" />
+    //     </div>
+    //   ),
+    // },
   ];
+
   return (
     <div className="p-6 space-y-6 w-full">
       {/* Welcome Section */}
@@ -109,6 +147,7 @@ export default function OrgDashboard() {
         <Button
           className="flex items-center space-x-2 bg-[#3A6A8D] hover:bg-[#5C87A3]"
           onClick={() => setShowProcedureModal(true)}
+          onClick={() => route.push("/organization/addNewProcedures")}
         >
           <Plus className="w-4 h-4" />
           <span>Add New Procedure</span>
@@ -195,7 +234,10 @@ export default function OrgDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {stats.map(({ data, description, icon }) => (
-          <Card key={data} className="shadow-sm border-gray-50">
+          <Card
+            key={data}
+            className="shadow-sm border-gray-50 hover:scale-105 transition-transform duration-300 cursor-pointer"
+          >
             <CardContent className="flex items-center justify-between p-4 ">
               {icon}
 
@@ -227,7 +269,7 @@ export default function OrgDashboard() {
         </Card>
 
         {/* Quick Overview */}
-        <Card className="shadow-sm border-gray-50">
+        {/* <Card className="shadow-sm border-gray-50">
           <CardHeader>
             <CardTitle>Quick Overview</CardTitle>
           </CardHeader>
@@ -252,7 +294,7 @@ export default function OrgDashboard() {
               </ul>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

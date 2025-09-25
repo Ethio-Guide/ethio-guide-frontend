@@ -1,8 +1,9 @@
+
 "use client"
 import { Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { BiSolidEdit } from "react-icons/bi";
-import { FaEye } from "react-icons/fa";
+// import { FaEye } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +31,63 @@ type Notice = {
 export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
   const { data, isLoading, error } = useGetOrgNoticesQuery(orgId);
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
+import { useState, useEffect } from "react";
+import Notice from "@/types/notice";
+import Link from "next/link";
+// import { Trash2 } from "lucide-react";
+import Pagination from "../shared/pagination";
+import DeleteConfirmDialog from "../shared/AdminAndOrg/DeleteConfirmDialog";
+import { useSession } from "next-auth/react";
+
+export default function OrgNoticeMangement() {
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [page, setPage] = useState(1);
+  // const [totalNotice, setTotalNotice] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [reload, setReload] = useState(false);
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  // const userId = session?.user?.id;
+
+  // console.log(notices);
+
+  const handleDelete = async (id: string) => {
+    // toast.success("Item deleted successfully!");
+    await fetch(
+      `https://ethio-guide-backend.onrender.com/api/v1/notices/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setReload((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const fetchsNotices = async () => {
+      try {
+        // const res = await fetch(`https://ethio-guide-backend.onrender.com/api/v1/notices?page=${page}&limit=${5}`);
+        const res = await fetch(
+          `https://ethio-guide-backend.onrender.com/api/v1/notices`
+        );
+
+        const data = await res.json();
+
+        setNotices(data.data); // adjust to your API response
+        // setTotalNotice(data.total); // if returned
+        setTotalPages(Math.ceil(data.total / 5));
+        console.log(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchsNotices();
+  }, [page, reload]); // <-- this will re-run whenever 'page' changes
+
 
   return (
     <div className="p-6 space-y-6 w-full">
@@ -79,6 +137,21 @@ export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
                   )}
                   {data?.notices?.map((notice: Notice) => (
                     <TableRow key={notice.id} className="hover:bg-accent">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-neutral">
+                  <TableHead>Notice Title</TableHead>
+                  <TableHead>Publish Date</TableHead>
+                  {/* <TableHead>Expiry Date</TableHead> */}
+                  <TableHead>Last Updated</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {notices.map(
+                  ({ id, title, content, created_at, updated_at }) => (
+                    <TableRow key={id} className="hover:bg-accent">
                       <TableCell>
                         <p className="font-medium">{notice.title}</p>
                         <p className="text-sm text-muted-foreground text-neutral">
@@ -98,6 +171,38 @@ export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
                         <FaEye className="w-4 h-4 text-primary cursor-pointer" onClick={() => setSelectedNotice(notice)} />
                         <BiSolidEdit className="w-4 h-4 text-primary cursor-pointer" />
                         <Trash2 className="w-4 h-4 text-red-600 cursor-pointer" />
+                          {content?.length > 100
+                            ? content.slice(0, 100) + "..."
+                            : content}
+                        </p>
+                      </TableCell>
+                      <TableCell className="text-neutral">
+                        {new Date(created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-neutral">
+                        {new Date(updated_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="flex space-x-2 mt-3">
+                        {/* <FaEye className="w-4 h-4 text-primary cursor-pointer" /> */}
+                        <Link href={`/organization/notices/edit/${id}`}>
+                          <Button className="p-2 bg-transparent hover:bg-blue-50 rounded-full transition-all duration-200 hover:scale-105">
+                            <BiSolidEdit className="w-4 h-4 text-blue-600" />
+                          </Button>
+                        </Link>
+                        <DeleteConfirmDialog
+                          title="Delete Notice"
+                          description="This will permanently remove this notice from your organization."
+                          confirmLabel="Delete"
+                          onConfirm={() => handleDelete(id)}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -105,7 +210,7 @@ export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
               </Table>
             )}
           </div>
-          {/* Pagination (static for now) */}
+                    {/* Pagination (static for now) */}
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground text-neutral">
               Showing 1 to {data?.notices?.length || 0} of {data?.total || data?.notices?.length || 0} results
@@ -118,6 +223,12 @@ export default function OrgNoticeMangement({ orgId = "demo-org-id" }) {
           </div>
         </CardContent>
       </Card>
+      {/* Pagination */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={(pagenum: number) => setPage(pagenum)}
+      />
 
       {/* View Notice Modal */}
       {selectedNotice && (
