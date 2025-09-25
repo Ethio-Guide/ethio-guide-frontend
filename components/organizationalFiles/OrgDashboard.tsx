@@ -1,8 +1,67 @@
-"use client";
+
+"use client"
+import { useState } from "react";
+import { useCreateProcedureMutation, useCreateNoticeMutation } from "@/app/services/orgsApi";
+// Placeholder hooks for future endpoints
+// import { useGetOrgMetricsQuery, useGetOrgRecentActivityQuery, useGetOrgTopProceduresQuery } from "@/app/services/orgsApi";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { IoMegaphoneOutline } from "react-icons/io5";
+import { MdOutlineFeedback } from "react-icons/md";
+import { FaUsers } from "react-icons/fa6";
+import { Building, Plus, Megaphone, FileText, MessageSquare } from "lucide-react";
+
+export default function OrgDashboard() {
+  // Modal state
+  const [showProcedureModal, setShowProcedureModal] = useState(false);
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+
+  // Form state
+  const [procedureForm, setProcedureForm] = useState({ title: "", description: "" });
+  const [noticeForm, setNoticeForm] = useState({ title: "", content: "" });
+
+
+  // Replace with actual orgId from session or props
+  const orgId = "demo-org-id";
+
+  // Placeholder for future RTK Query hooks
+  // const { data: metrics, isLoading: metricsLoading } = useGetOrgMetricsQuery(orgId);
+  // const { data: recentActivity, isLoading: activityLoading } = useGetOrgRecentActivityQuery(orgId);
+  // const { data: topProcedures, isLoading: topProceduresLoading } = useGetOrgTopProceduresQuery(orgId);
+
+  // RTK Query mutations
+  const [createProcedure, { isLoading: isCreatingProcedure }] = useCreateProcedureMutation();
+  const [createNotice, { isLoading: isCreatingNotice }] = useCreateNoticeMutation();
+
+  // Handlers
+  const handleProcedureSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createProcedure({ orgId, ...procedureForm }).unwrap();
+      setShowProcedureModal(false);
+      setProcedureForm({ title: "", description: "" });
+      alert("Procedure created!");
+    } catch (err) {
+      alert("Failed to create procedure");
+    }
+  };
+  const handleNoticeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createNotice({ orgId, ...noticeForm }).unwrap();
+      setShowNoticeModal(false);
+      setNoticeForm({ title: "", content: "" });
+      alert("Notice created!");
+    } catch (err) {
+      alert("Failed to create notice");
+    }
+  };
+
+  // Example: Replace with metrics?.proceduresCount, etc. when endpoint is ready
+  const stats = [
+    {
+      data: "-", // metrics?.proceduresCount ?? "-",
 // import { MdOutlineFeedback } from "react-icons/md";
 // import { FaUsers } from "react-icons/fa6";
 import { Plus, Megaphone, FileText, MessageSquare } from "lucide-react";
@@ -28,11 +87,30 @@ export default function OrgDashboard({
       ),
     },
     {
+      data: "-", // metrics?.activeNoticesCount ?? "-",
       data: totalNotices,
       description: "Active Notices",
       icon: (
         <div className="bg-gray-100 p-3 rounded-2xl ">
           <IoMegaphoneOutline className="w-6 h-6 text-[#5E9C8D] mb-2" />
+        </div>
+      ),
+    },
+    {
+      data: "-", // metrics?.pendingFeedbackCount ?? "-",
+      description: "Pending Feedback",
+      icon: (
+        <div className="bg-gray-100 p-3 rounded-2xl ">
+          <MdOutlineFeedback className="w-6 h-6 text-[#1C3B2E] mb-2" />
+        </div>
+      ),
+    },
+    {
+      data: "-", // metrics?.userInteractionsCount ?? "-",
+      description: "User Interactions",
+      icon: (
+        <div className="bg-gray-100 p-3 rounded-2xl ">
+          <FaUsers className="w-6 h-6 text-[#1C3B2E] mb-2" />
         </div>
       ),
     },
@@ -68,18 +146,90 @@ export default function OrgDashboard({
       <div className="flex space-x-4 text-white">
         <Button
           className="flex items-center space-x-2 bg-[#3A6A8D] hover:bg-[#5C87A3]"
+          onClick={() => setShowProcedureModal(true)}
           onClick={() => route.push("/organization/addNewProcedures")}
         >
           <Plus className="w-4 h-4" />
           <span>Add New Procedure</span>
         </Button>
-        <Link href="/organization/notices/create">
-          <Button className="flex items-center space-x-2 bg-[#5E9C8D] hover:bg-[#7FB4A6]">
-            <Megaphone className="w-4 h-4" />
-            <span>Create Notice</span>
-          </Button>
-        </Link>
+        <Button
+          className="flex items-center space-x-2 bg-[#5E9C8D] hover:bg-[#7FB4A6]"
+          onClick={() => setShowNoticeModal(true)}
+        >
+          <Megaphone className="w-4 h-4" />
+          <span>Create Notice</span>
+        </Button>
       </div>
+
+      {/* Add New Procedure Modal */}
+      {showProcedureModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">Add New Procedure</h2>
+            <form onSubmit={handleProcedureSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Title</label>
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  value={procedureForm.title}
+                  onChange={e => setProcedureForm(f => ({ ...f, title: e.target.value }))}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  className="w-full border rounded px-3 py-2"
+                  value={procedureForm.description}
+                  onChange={e => setProcedureForm(f => ({ ...f, description: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setShowProcedureModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Notice Modal */}
+      {showNoticeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">Create Notice</h2>
+            <form onSubmit={handleNoticeSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Title</label>
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  value={noticeForm.title}
+                  onChange={e => setNoticeForm(f => ({ ...f, title: e.target.value }))}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Content</label>
+                <textarea
+                  className="w-full border rounded px-3 py-2"
+                  value={noticeForm.content}
+                  onChange={e => setNoticeForm(f => ({ ...f, content: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setShowNoticeModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -108,53 +258,11 @@ export default function OrgDashboard({
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Replace with recentActivity?.items.map(...) when endpoint is ready */}
             <ul className="space-y-4">
-              <li className="flex items-center space-x-3">
-                <div className="bg-gray-200 p-2 rounded-full">
-                  <Plus className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    New procedure added: Passport Renewal
-                  </p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-3">
-                <div className="bg-gray-200 p-2 rounded-full">
-                  <Megaphone className="w-5 h-5 text-[#5E9C8D] " />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    Notice published: Office closed for holiday
-                  </p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-3">
-                <div className="bg-gray-200 p-2 rounded-full">
-                  <MessageSquare className="w-5 h-5 text-[#3A6A8D]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    User feedback received on Driver&#39;s License procedure
-                  </p>
-                  <p className="text-xs text-muted-foreground">3 days ago</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-3">
-                <div className="bg-gray-200 p-2 rounded-full">
-                  <FileText className="w-5 h-5 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    Procedure updated: Visa Application Process
-                  </p>
-                  <p className="text-xs text-muted-foreground">5 days ago</p>
-                </div>
-              </li>
+              <li className="text-muted-foreground">No activity data yet.</li>
             </ul>
-            <Button variant="link" className="mt-4">
+            <Button variant="link" className="mt-4" disabled>
               View all activities
             </Button>
           </CardContent>
@@ -166,24 +274,23 @@ export default function OrgDashboard({
             <CardTitle>Quick Overview</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Replace with topProcedures?.map(...) when endpoint is ready */}
             <div className="space-y-2">
               <p className="text-sm">
-                <span className="text-blue-600">●</span> Active Procedures: 89
+                <span className="text-blue-600">●</span> Active Procedures: -
               </p>
               <p className="text-sm">
-                <span className="text-[#5E9C8D]">●</span> Draft Procedures: 12
+                <span className="text-[#5E9C8D]">●</span> Draft Procedures: -
               </p>
               <p className="text-sm">
-                <span className="text-gray-600">●</span> Archived: 26
+                <span className="text-gray-600">●</span> Archived: -
               </p>
             </div>
             <div className="mt-4">
               <hr />
               <h4 className="text-sm font-medium mb-2 mt-5">Top Procedures</h4>
               <ul className="space-y-1 text-sm">
-                <li>Passport Application - 342 views</li>
-                <li>Visa Renewal - 198 views</li>
-                <li>Work Permit - 156 views</li>
+                <li>No data yet.</li>
               </ul>
             </div>
           </CardContent>

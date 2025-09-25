@@ -1,3 +1,13 @@
+import { configureStore } from '@reduxjs/toolkit';
+import { orgsApi } from '../services/orgsApi';
+
+export const store = configureStore({
+  reducer: {
+    [orgsApi.reducerPath]: orgsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(orgsApi.middleware),
+
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiSlice } from "./slices/workspaceSlice";
@@ -44,5 +54,5 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
 setupListeners(store.dispatch);
+
